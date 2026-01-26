@@ -1,0 +1,42 @@
+{
+  "$schema": "https://claude.ai/schemas/settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(kubectl get:*)",
+      "Bash(kubectl describe:*)",
+      "Bash(kubectl logs:*)",
+      "Bash(terraform plan:*)",
+      "Bash(terraform show:*)",
+      "Bash(terraform validate:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker logs:*)",
+      "Bash(aws sts get-caller-identity)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "mcp__kubernetes__get_pods",
+      "mcp__kubernetes__get_logs",
+      "mcp__kubernetes__describe_*",
+      "mcp__terraform__plan",
+      "mcp__terraform__show"
+    ],
+    "deny": [
+      "Bash(kubectl delete:*)",
+      "Bash(kubectl exec:*)",
+      "Bash(terraform destroy:*)",
+      "Bash(terraform apply:*)",
+      "Bash(rm -rf:*)",
+      "Bash(aws * delete*)",
+      "Bash(docker rm:*)",
+      "Bash(docker rmi:*)"
+    ]
+  },
+  "model": {
+    "default": "claude-sonnet-4-5",
+    "allowSwitch": true
+  },
+  "context": {
+    "maxTokens": 100000,
+    "autoCompact": true
+  }
+}
