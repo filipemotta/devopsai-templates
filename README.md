@@ -1,18 +1,18 @@
-# Templates para Claude Code + Cursor
+# Templates for Claude Code + Cursor
 
-Este diretorio contem templates prontos para configurar seu ambiente de IA para DevOps.
+This directory contains ready-to-use templates to configure your AI environment for DevOps.
 
-## Estrutura
+## Structure
 
 ```
 templates/
-├── README.md                      # Este arquivo
-├── cursorrules-devops.txt         # .cursorrules basico
-├── cursorrules-agente.txt         # .cursorrules para agentes avancados
-├── CLAUDE-devops.md               # CLAUDE.md basico
-├── CLAUDE-completo.md             # CLAUDE.md completo (todos os detalhes)
+├── README.md                      # This file
+├── cursorrules-devops.txt         # Basic .cursorrules
+├── cursorrules-agent.txt          # Advanced .cursorrules for agents
+├── CLAUDE-devops.md               # Basic CLAUDE.md
+├── CLAUDE-complete.md             # Complete CLAUDE.md (all details)
 ├── claude-settings.json           # .claude/settings.json
-└── subagents/                     # Subagentes especializados
+└── subagents/                     # Specialized subagents
     ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
     ├── terraform-reviewer.md      # Terraform security & cost review
     ├── ci-security-analyst.md     # CI/CD vulnerability analysis
@@ -20,158 +20,158 @@ templates/
     └── security-auditor.md        # Security audit & CVE triage
 ```
 
-## Arquivos de Configuracao
+## Configuration Files
 
 ### 1. `.cursorrules`
 
-Define o comportamento do agente de IA.
+Defines the AI agent's behavior.
 
-**Opcoes:**
-- `cursorrules-devops.txt` - Configuracao basica para DevOps
-- `cursorrules-agente.txt` - Configuracao avancada para agentes
+**Options:**
+- `cursorrules-devops.txt` - Basic DevOps configuration
+- `cursorrules-agent.txt` - Advanced configuration for agents
 
-**Uso:**
+**Usage:**
 ```bash
 cp templates/cursorrules-devops.txt .cursorrules
 ```
 
 ### 2. `CLAUDE.md`
 
-Contexto do projeto para o Claude.
+Project context for Claude.
 
-**Opcoes:**
-- `CLAUDE-devops.md` - Template basico para comecar
-- `CLAUDE-completo.md` - Template completo com todos os detalhes
+**Options:**
+- `CLAUDE-devops.md` - Basic template to get started
+- `CLAUDE-complete.md` - Complete template with all details
 
-**Uso:**
+**Usage:**
 ```bash
-cp templates/CLAUDE-completo.md CLAUDE.md
-# Edite com informacoes do seu projeto
+cp templates/CLAUDE-complete.md CLAUDE.md
+# Edit with your project information
 ```
 
 ### 3. `.claude/settings.json`
 
-Permissoes e configuracoes do Claude Code.
+Claude Code permissions and settings.
 
-**Uso:**
+**Usage:**
 ```bash
 mkdir -p .claude
 cp templates/claude-settings.json .claude/settings.json
 ```
 
-## Subagentes Especializados
+## Specialized Subagents
 
-Os subagentes ficam em `.claude/agents/` e sao especialistas em dominios especificos.
+Subagents go in `.claude/agents/` and are specialists in specific domains.
 
 ### k8s-troubleshoot.md
-Especialista em troubleshooting de Kubernetes.
-- Diagnostico de pods, deployments, services
-- Analise de logs e eventos
-- Sugestoes de correcao
+Kubernetes troubleshooting specialist.
+- Pod, deployment, service diagnostics
+- Log and event analysis
+- Fix suggestions
 
-**Uso:**
+**Usage:**
 ```bash
 mkdir -p .claude/agents
 cp templates/subagents/k8s-troubleshoot.md .claude/agents/
 ```
 
-**Invocar:** `@k8s-troubleshoot o deployment payment-service esta com erro`
+**Invoke:** `@k8s-troubleshoot the payment-service deployment has an error`
 
 ### terraform-reviewer.md
-Revisor de codigo Terraform focado em seguranca e custos.
-- Security Groups, IAM, criptografia
-- Otimizacao de custos
+Terraform code reviewer focused on security and costs.
+- Security Groups, IAM, encryption
+- Cost optimization
 - Best practices
 
-**Uso:**
+**Usage:**
 ```bash
 cp templates/subagents/terraform-reviewer.md .claude/agents/
 ```
 
-**Invocar:** `@terraform-reviewer analise todos os arquivos .tf`
+**Invoke:** `@terraform-reviewer analyze all .tf files`
 
 ### ci-security-analyst.md
-Analista de seguranca de pipelines CI/CD.
-- Triagem de CVEs
-- Analise de reachability
+CI/CD pipeline security analyst.
+- CVE triage
+- Reachability analysis
 - Supply chain security
 
-**Uso:**
+**Usage:**
 ```bash
 cp templates/subagents/ci-security-analyst.md .claude/agents/
 ```
 
-**Invocar:** `@ci-security-analyst o workflow falhou no Trivy scan`
+**Invoke:** `@ci-security-analyst the workflow failed on Trivy scan`
 
 ### incident-analyzer.md
-Investigador de incidentes de producao.
-- Correlacao temporal de eventos
+Production incident investigator.
+- Temporal event correlation
 - Pattern recognition
-- Recomendacoes de acao
+- Action recommendations
 
-**Uso:**
+**Usage:**
 ```bash
 cp templates/subagents/incident-analyzer.md .claude/agents/
 ```
 
-**Invocar:** `@incident-analyzer o servico payment-api esta com latencia alta`
+**Invoke:** `@incident-analyzer the payment-api service has high latency`
 
 ### security-auditor.md
-Auditor de seguranca e compliance.
-- CVE triage com risk scoring
+Security and compliance auditor.
+- CVE triage with risk scoring
 - Security configuration review
 - Kubernetes security audit
 
-**Uso:**
+**Usage:**
 ```bash
 cp templates/subagents/security-auditor.md .claude/agents/
 ```
 
-**Invocar:** `@security-auditor faca audit de seguranca do namespace production`
+**Invoke:** `@security-auditor audit the production namespace security`
 
-## Setup Rapido Completo
+## Complete Quick Setup
 
-Execute no diretorio do seu projeto:
+Run in your project directory:
 
 ```bash
-# Criar estrutura de diretorios
+# Create directory structure
 mkdir -p .claude/agents
 
-# Copiar configuracoes principais
-cp /path/to/templates/cursorrules-agente.txt .cursorrules
-cp /path/to/templates/CLAUDE-completo.md CLAUDE.md
+# Copy main configurations
+cp /path/to/templates/cursorrules-agent.txt .cursorrules
+cp /path/to/templates/CLAUDE-complete.md CLAUDE.md
 cp /path/to/templates/claude-settings.json .claude/settings.json
 
-# Copiar todos os subagentes
+# Copy all subagents
 cp /path/to/templates/subagents/*.md .claude/agents/
 ```
 
-## Personalizacao
+## Customization
 
-Apos copiar, edite os arquivos para refletir:
+After copying, edit the files to reflect:
 
 1. **CLAUDE.md:**
-   - Nome e arquitetura do projeto
-   - Versoes especificas (K8s, Terraform, etc)
-   - Padroes e convencoes da equipe
-   - Contatos e escalacao
+   - Project name and architecture
+   - Specific versions (K8s, Terraform, etc.)
+   - Team standards and conventions
+   - Contacts and escalation
 
 2. **.cursorrules:**
-   - Regras especificas do seu ambiente
-   - Restricoes de seguranca adicionais
+   - Environment-specific rules
+   - Additional security restrictions
 
 3. **settings.json:**
-   - Comandos permitidos/negados
-   - MCPs habilitados
+   - Allowed/denied commands
+   - Enabled MCPs
 
-4. **Subagentes:**
-   - Adapte as tools disponiveis
-   - Ajuste personas para seu contexto
+4. **Subagents:**
+   - Adapt available tools
+   - Adjust personas for your context
 
-## Dicas
+## Tips
 
-1. **Revise as permissoes** em `.claude/settings.json` - ajuste para seu nivel de confianca
-2. **Mantenha CLAUDE.md atualizado** - e a "memoria" do projeto para a IA
-3. **Versione estes arquivos** - commit no git para toda a equipe usar
-4. **Comece com um subagente** - adicione mais conforme necessidade
-5. **Teste em ambiente de dev** - antes de usar em producao
+1. **Review permissions** in `.claude/settings.json` - adjust for your trust level
+2. **Keep CLAUDE.md updated** - it's the project "memory" for the AI
+3. **Version these files** - commit to git for the whole team to use
+4. **Start with one subagent** - add more as needed
+5. **Test in dev environment** - before using in production

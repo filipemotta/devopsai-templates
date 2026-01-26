@@ -1,7 +1,7 @@
-# CLAUDE.md - Template DevOps Project
+# CLAUDE.md - DevOps Project Template
 
 ## Project Overview
-- **Name**: [Nome do Projeto]
+- **Name**: [Project Name]
 - **Type**: [Microservices/Monolith/Serverless]
 - **Environment**: [Development/Staging/Production]
 
