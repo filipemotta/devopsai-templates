@@ -11,6 +11,8 @@ templates/
 ├── cursorrules-agent.txt          # Advanced .cursorrules for agents
 ├── CLAUDE-devops.md               # Basic CLAUDE.md
 ├── CLAUDE-complete.md             # Complete CLAUDE.md (all details)
+├── CLAUDE-terraform-agent-teams.md # Agent Teams for Terraform refactoring
+├── CLAUDE-incident-response-agent-teams.md # Agent Teams for incident war rooms
 ├── claude-settings.json           # .claude/settings.json
 └── subagents/                     # Specialized subagents
     ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
@@ -42,6 +44,9 @@ Project context for Claude.
 **Options:**
 - `CLAUDE-devops.md` - Basic template to get started
 - `CLAUDE-complete.md` - Complete template with all details
+- `CLAUDE-eks-upgrade.md` - EKS upgrade project with Agent Teams validation
+- `CLAUDE-terraform-agent-teams.md` - Agent Teams for Terraform refactoring
+- `CLAUDE-incident-response-agent-teams.md` - Agent Teams for incident war rooms
 
 **Usage:**
 ```bash
@@ -144,6 +149,39 @@ cp /path/to/templates/claude-settings.json .claude/settings.json
 
 # Copy all subagents
 cp /path/to/templates/subagents/*.md .claude/agents/
+```
+
+## Agent Teams Templates (Opus 4.6)
+
+Agent Teams is an experimental Claude Code feature that enables multiple coordinated AI agents working in parallel with shared task lists. These templates configure Agent Teams for specific DevOps scenarios.
+
+> Requires: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `.claude/settings.json`
+
+### CLAUDE-eks-upgrade.md
+Complete EKS upgrade template with Agent Teams multi-agent validation.
+- 4 agents: upgrade-coordinator, compatibility-checker, workload-validator, security-auditor
+- Parallel validation of addons, APIs, workloads, and security
+- GO / CONDITIONAL GO / NO-GO decision framework
+
+### CLAUDE-terraform-agent-teams.md
+Agent Teams configuration for Terraform infrastructure refactoring.
+- 4 agents: refactor-planner, security-reviewer, cost-analyzer, blast-radius-mapper
+- Parallel analysis of security, cost, and dependencies
+- Safe state move script generation
+
+### CLAUDE-incident-response-agent-teams.md
+Agent Teams configuration for automated incident war rooms.
+- 4 agents: incident-commander, logs-investigator, metrics-analyzer, deploy-auditor
+- Parallel investigation across logs, metrics, and deployments
+- RCA consolidation with confidence levels
+
+**Usage:**
+```bash
+# Merge the relevant Agent Teams section into your CLAUDE.md
+cat /path/to/templates/CLAUDE-terraform-agent-teams.md >> CLAUDE.md
+
+# Enable Agent Teams in settings
+echo '{ "env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" } }' > .claude/settings.json
 ```
 
 ## Customization
