@@ -38,5 +38,43 @@
   "context": {
     "maxTokens": 100000,
     "autoCompact": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Evaluate safety: block terraform destroy without -target, kubectl delete namespace in prod, rm -rf on critical paths, git push --force to main. Approve if safe.",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=\"$CLAUDE_TOOL_FILE_PATH\"; if [[ \"$FILE\" == *.tf ]]; then terraform fmt \"$FILE\" 2>/dev/null && echo '✅ Terraform formatted'; elif [[ \"$FILE\" == *.yaml || \"$FILE\" == *.yml ]]; then yamllint -d relaxed \"$FILE\" 2>/dev/null && echo '✅ YAML valid'; fi",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before stopping, verify: 1) terraform validate passed? 2) K8s manifests valid? 3) No secrets exposed? 4) All tasks completed?",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
   }
 }

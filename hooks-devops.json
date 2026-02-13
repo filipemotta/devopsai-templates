@@ -1,0 +1,73 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '🚀 DevOps session started at '$(date) && if [ -f main.tf ]; then echo '🏗️ Terraform project detected'; elif [ -f Dockerfile ]; then echo '🐳 Docker project detected'; elif [ -d k8s/ ] || [ -d manifests/ ]; then echo '☸️ Kubernetes project detected'; fi"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Evaluate if this bash command is safe for production environments. BLOCK these dangerous commands: 'terraform destroy' without specific -target, 'terraform apply' with -auto-approve in production, 'kubectl delete namespace' in production, 'kubectl exec' on production pods without justification, 'rm -rf /' or 'rm -rf' on critical paths, 'docker system prune -af', 'git push --force' to main/master, any command that could cause irreversible data loss. Return 'approve' if safe or 'block' with reason.",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=\"$CLAUDE_TOOL_FILE_PATH\"; if [[ \"$FILE\" == *.tf ]]; then terraform fmt \"$FILE\" 2>/dev/null && terraform validate 2>/dev/null && echo '✅ Terraform: formatted and validated'; elif [[ \"$FILE\" == *.yaml || \"$FILE\" == *.yml ]]; then if [[ \"$FILE\" == *github/workflows* ]]; then actionlint \"$FILE\" 2>/dev/null && echo '✅ GitHub Actions workflow valid'; else kubectl apply --dry-run=client -f \"$FILE\" 2>/dev/null && echo '✅ K8s manifest valid'; fi; elif [[ \"$FILE\" == *Dockerfile* ]]; then hadolint \"$FILE\" 2>/dev/null && echo '✅ Dockerfile linted'; fi",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"[$(date -u +%Y-%m-%dT%H:%M:%SZ)] Tool executed\" >> /tmp/claude-audit.log",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before stopping, verify task completion: 1) If Terraform was modified: did terraform validate pass? 2) If K8s manifests were edited: are they valid? 3) No secrets, API keys, or credentials exposed in any file? 4) All requested tasks completed? Return 'approve' to stop or 'block' with reason to continue.",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Verify subagent task completion. Did the subagent fully complete its assigned task? Are there any errors or incomplete outputs? Return 'approve' to stop or 'block' with reason.",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

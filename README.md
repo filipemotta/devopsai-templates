@@ -13,7 +13,8 @@ templates/
 ├── CLAUDE-complete.md             # Complete CLAUDE.md (all details)
 ├── CLAUDE-terraform-agent-teams.md # Agent Teams for Terraform refactoring
 ├── CLAUDE-incident-response-agent-teams.md # Agent Teams for incident war rooms
-├── claude-settings.json           # .claude/settings.json
+├── claude-settings.json           # .claude/settings.json (with hooks)
+├── hooks-devops.json              # Standalone hooks config (all DevOps hooks)
 └── subagents/                     # Specialized subagents
     ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
     ├── terraform-reviewer.md      # Terraform security & cost review
@@ -56,12 +57,30 @@ cp templates/CLAUDE-complete.md CLAUDE.md
 
 ### 3. `.claude/settings.json`
 
-Claude Code permissions and settings.
+Claude Code permissions, settings, and hooks. Includes PreToolUse safety checks, PostToolUse auto-validation (Terraform fmt, YAML lint), and Stop verification hooks.
 
 **Usage:**
 ```bash
 mkdir -p .claude
 cp templates/claude-settings.json .claude/settings.json
+```
+
+### 4. `hooks-devops.json`
+
+Standalone hooks configuration with all DevOps-specific hooks. Use this if you want to add hooks to an existing settings.json, or as a reference for building your own.
+
+Includes:
+- **SessionStart** - Auto-detect project type (Terraform, Docker, K8s)
+- **PreToolUse** - Block destructive commands (terraform destroy, kubectl delete namespace, rm -rf, git push --force)
+- **PostToolUse** - Auto-validate edited files (.tf, .yaml, Dockerfile) + audit logging
+- **Stop** - Verify task completion before agent stops
+- **SubagentStop** - Verify subagent task completion
+
+**Usage:**
+```bash
+# Copy the hooks section into your existing .claude/settings.json
+# Or use as standalone reference
+cat templates/hooks-devops.json
 ```
 
 ## Specialized Subagents
