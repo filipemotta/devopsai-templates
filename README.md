@@ -14,7 +14,18 @@ templates/
 ├── CLAUDE-terraform-agent-teams.md # Agent Teams for Terraform refactoring
 ├── CLAUDE-incident-response-agent-teams.md # Agent Teams for incident war rooms
 ├── claude-settings.json           # .claude/settings.json (with hooks)
-├── hooks-devops.json              # Standalone hooks config (all DevOps hooks)
+├── hooks/                         # Claude Code hooks
+│   └── hooks-devops.json          # All DevOps hooks (PreToolUse, PostToolUse, Stop, etc.)
+├── skills/                        # Claude Code skills by domain
+│   ├── terraform/
+│   ├── kubernetes/
+│   ├── cicd/
+│   ├── observability/
+│   ├── security/
+│   ├── finops/
+│   ├── gitops/
+│   ├── devops-general/
+│   └── eks-upgrade/
 └── subagents/                     # Specialized subagents
     ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
     ├── terraform-reviewer.md      # Terraform security & cost review
@@ -80,7 +91,7 @@ Includes:
 ```bash
 # Copy the hooks section into your existing .claude/settings.json
 # Or use as standalone reference
-cat templates/hooks-devops.json
+cat templates/hooks/hooks-devops.json
 ```
 
 ## Specialized Subagents
