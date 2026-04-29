@@ -17,15 +17,31 @@ templates/
 ├── hooks/                         # Claude Code hooks
 │   └── hooks-devops.json          # All DevOps hooks (PreToolUse, PostToolUse, Stop, etc.)
 ├── skills/                        # Claude Code skills by domain
-│   ├── terraform/
-│   ├── kubernetes/
-│   ├── cicd/
+│   ├── aws/                       # AWS-specific skills
+│   │   ├── eks-upgrade/           # EKS upgrade verification (deprecated APIs, addons)
+│   │   ├── karpenter-debug/       # Karpenter troubleshooting (NodeClaim, consolidation)
+│   │   ├── karpenter-provision/   # Generate NodePool + EC2NodeClass configs
+│   │   └── iam-review/            # AWS IAM least-privilege review
+│   ├── gcp/                       # GCP-specific skills
+│   │   ├── gke-multi-region-bootstrap/  # Agent-team provisioning across regions
+│   │   └── gke-incident-triage/   # Read-only-first GKE incident response
+│   ├── terraform/                 # Cloud-agnostic Terraform skills
+│   ├── terraform-plan/
+│   ├── terraform-review/
+│   ├── kubernetes/                # Cloud-agnostic K8s skills
+│   ├── k8s-debug/
+│   ├── k8s-review/
+│   ├── cicd/                      # CI/CD generic
+│   ├── pipeline-debug/
+│   ├── pipeline-review/
 │   ├── observability/
+│   ├── incident-debug/
 │   ├── security/
+│   ├── security-scan/
 │   ├── finops/
+│   ├── cost-review/
 │   ├── gitops/
-│   ├── devops-general/
-│   └── eks-upgrade/
+│   └── devops-general/
 └── subagents/                     # Specialized subagents
     ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
     ├── terraform-reviewer.md      # Terraform security & cost review
