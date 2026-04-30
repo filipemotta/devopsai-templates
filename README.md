@@ -197,7 +197,7 @@ cp /path/to/templates/claude-settings.json .claude/settings.json
 cp /path/to/templates/subagents/*.md .claude/agents/
 ```
 
-## Agent Teams Templates (Opus 4.6)
+## Agent Teams Templates (Opus 4.6+, recommended Opus 4.7 with xhigh effort and task budgets)
 
 Agent Teams is an experimental Claude Code feature that enables multiple coordinated AI agents working in parallel with shared task lists. These templates configure Agent Teams for specific DevOps scenarios.
 
