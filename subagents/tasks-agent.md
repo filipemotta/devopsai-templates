@@ -48,19 +48,19 @@ If a deliverable is too big for one task, split into 2-3 sub-tasks. If a task is
 - [ ] **1.1** — Initialize state backend
   - Files: `terraform/backend.tf`
   - Acceptance: `terraform init` succeeds, state file in S3 visible
-  - Maps to: design §State Strategy
+  - Maps to: design State Strategy section
 
 - [ ] **1.2** — Configure providers
   - Files: `terraform/providers.tf`
   - Acceptance: AWS provider ~> 5.0 pinned; `terraform validate` passes
-  - Maps to: design §Provider Versions
+  - Maps to: design Provider Versions section
 
 ## Phase 2: Core Implementation
 - [ ] **2.1** — Create VPC module instantiation
   - Files: `terraform/environments/prod/vpc/main.tf`
   - Acceptance: `terraform plan` shows VPC + 6 subnets + 3 NAT gateways; tags match steering
   - Depends on: 1.1, 1.2
-  - Maps to: design §VPC Module Choice
+  - Maps to: design VPC Module Choice section
 
 - [ ] **2.2** — Define VPC variables
   - Files: `terraform/environments/prod/vpc/variables.tf`

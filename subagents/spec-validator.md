@@ -79,7 +79,7 @@ ERRORS (must fix):
 
 WARNINGS (consider):
   ⚠ Task 4.1 has acceptance criterion "looks good" — replace with testable criterion
-  ⚠ Design §State Strategy doesn't reference requirement (orphan)
+  ⚠ Design State Strategy section doesn't reference requirement (orphan)
 
 INFO:
   ✓ 7 of 7 requirements covered

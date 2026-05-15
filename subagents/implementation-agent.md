@@ -86,9 +86,9 @@ Files written:
 Validation:
 ✓ terraform fmt
 ✓ terraform validate
-✓ terraform plan: 8 resources to add (matches design §VPC)
+✓ terraform plan: 8 resources to add (matches design VPC section)
 
-Mapped to: requirements US1, US2; design §VPC Module Choice
+Mapped to: requirements US1, US2; design VPC Module Choice section
 ```
 
 Keep it terse. The user can read the diff for details.
