@@ -2,7 +2,7 @@
 
 #### Metadata
 - Name: Production Incident Analyzer
-- Model: Claude Sonnet 4.5
+- Model: Claude Opus 4.7
 - Tools: HTTP requests (Prometheus, Elasticsearch, GitHub APIs)
 
 #### Persona

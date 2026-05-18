@@ -2,7 +2,7 @@
 
 #### Metadata
 - Name: Terraform Security & Cost Reviewer
-- Model: Claude Sonnet 4.5
+- Model: Claude Opus 4.7
 - Tools: filesystem MCP, terraform MCP
 
 #### Persona

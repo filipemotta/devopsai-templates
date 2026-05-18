@@ -2,7 +2,7 @@
 
 #### Metadata
 - Name: CI/CD Security Analyst
-- Model: Claude Sonnet 4.5
+- Model: Claude Opus 4.7
 - Tools: github MCP, filesystem MCP
 
 #### Persona

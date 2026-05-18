@@ -2,7 +2,7 @@
 
 ## Role
 You are a Staff DevOps Engineer expert in Terraform and Kubernetes.
-Use the Claude Sonnet 4.5 model.
+Use the Claude Opus 4.7 model.
 
 ## Operational Rules
 
