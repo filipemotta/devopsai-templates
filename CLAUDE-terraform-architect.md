@@ -196,9 +196,17 @@ terraform {
 
 ### 3. AWS Provider with Assume Role + Default Tags
 
-The `provider "aws"` block is IDENTICAL across all stacks:
+The `provider "aws"` block is IDENTICAL across all stacks. For production stacks, it uses a **workspace-aware** assume_role to enforce a plan-only role on production (see section 14 below for the IAM policy):
 
 ```hcl
+locals {
+  workspace_role_arn = {
+    sandbox    = "arn:aws:iam::667111065816:role/terraform-apply"
+    staging    = "arn:aws:iam::667111065816:role/terraform-apply"
+    production = "arn:aws:iam::667111065816:role/terraform-plan-readonly"
+  }
+}
+
 provider "aws" {
   region = var.assume_role.region
 
@@ -207,7 +215,7 @@ provider "aws" {
   }
 
   assume_role {
-    role_arn = var.assume_role.role_arn
+    role_arn = local.workspace_role_arn[terraform.workspace]
   }
 }
 ```
@@ -215,6 +223,7 @@ provider "aws" {
 - Region comes from `var.assume_role.region` (NOT from a loose `region` variable).
 - Global tags come from `var.tags` via `default_tags`. Individual resources only carry `Name`.
 - Access is always via `assume_role` (never direct credentials).
+- For non-production stacks or simpler setups, replace the `local.workspace_role_arn` lookup with `var.assume_role.role_arn` (the single-role pattern). See section 14 for when to upgrade.
 
 ### 4. Variable Pattern
 
@@ -439,6 +448,77 @@ When creating a new stack, ENSURE:
 - [ ] `datasources.tf` if consuming state from another stack
 - [ ] Backend key = `<stack>/<stack>.tfstate`
 - [ ] `terraform validate` passes before delivery
+
+---
+
+### 13. Hard Guardrail: Plan-Only IAM Role for Production
+
+Beyond the soft guardrails in the agent definition above (CLAUDE.md instructions, hooks), enforce a hard guardrail at the AWS layer: the role Claude assumes when `terraform.workspace == "production"` is a **plan-only role** that cannot write resources. Even if the agent tries `terraform apply` due to prompt injection or a model error, AWS rejects every create/update/delete with `AccessDenied`.
+
+#### Plan-only IAM policy
+
+Attach this policy to the role `terraform-plan-readonly`. It allows everything `terraform plan` needs (read resources, read state), and explicitly denies anything outside that whitelist:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadAllResources",
+      "Effect": "Allow",
+      "Action": [
+        "*:Describe*",
+        "*:List*",
+        "*:Get*",
+        "iam:SimulatePrincipalPolicy"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ReadStateBucket",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::ppgp-us-east-1-bucket-terraform-state",
+        "arn:aws:s3:::ppgp-us-east-1-bucket-terraform-state/*"
+      ]
+    },
+    {
+      "Sid": "DenyEverythingElse",
+      "Effect": "Deny",
+      "NotAction": [
+        "*:Describe*",
+        "*:List*",
+        "*:Get*",
+        "iam:SimulatePrincipalPolicy",
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:ListBucket",
+        "sts:AssumeRole",
+        "sts:GetCallerIdentity"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+#### How production apply happens
+
+The agent never calls `terraform apply` on the production workspace. Two canonical patterns:
+
+1. **Human with MFA**: an authorized engineer runs `aws sts assume-role` manually for the `terraform-apply` role (whose trust policy requires MFA) and executes `terraform apply tfplan` with the plan Claude generated.
+2. **CI step with approval**: GitHub Actions environment with required reviewers, or CodePipeline manual approval. The "apply" step assumes the `terraform-apply` role via OIDC, outside the agent's context.
+
+In both cases, Claude is the author of the plan; the entity that approves and executes the apply is different and carries a different IAM permission.
+
+#### When to adopt
+
+Skip this pattern for solo or learning projects with no production workspace. Adopt it the moment you have any environment that classifies as "production" (real users, real money, real data). Pair with Permission Boundaries on the role and Service Control Policies at the AWS Organizations level for stronger guarantees (see the DevOps AI Guide section 12.7).
 
 ---
 
