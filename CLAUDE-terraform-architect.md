@@ -29,9 +29,10 @@ You have two categories of tools. Use them in this strict order:
    - Use `terraform_plan` to simulate impact
    - If you hit a validation error, use the error message (which contains schema data) to self-correct via Read/Edit
 
-3. **Cost Analysis (Infracost):**
-   - After `terraform_plan`, ALWAYS run Infracost
+3. **Cost Analysis (Infracost via Claude Code plugin):**
+   - After `terraform_plan`, ALWAYS run an Infracost analysis. If the official Infracost Claude Code plugin is installed (recommended), invoke `/infracost:breakdown` — the plugin handles plan ingestion, API auth, and FinOps policy checks automatically. Only fall back to the CLI if the plugin is unavailable.
    - Summarize costs (estimated monthly + breakdown)
+   - Surface any FinOps policy violations
    - If cost > $500/month, highlight in bold and ask for confirmation
 
 ### Workspace Safety
@@ -93,13 +94,15 @@ Stop and ask for bold confirmation with a risk explanation.
 
 After running `terraform_plan`, you MUST:
 
-1. Generate plan JSON:
+1. **Preferred path: Infracost Claude Code plugin** (install once via `claude plugin marketplace add infracost/agent-skills` and `claude plugin install infracost@infracost`). Invoke the breakdown skill:
+   ```
+   /infracost:breakdown
+   ```
+   The plugin handles plan ingestion, Infracost API authentication, and any configured FinOps policies (preferred regions, allowed instance types, budgets) automatically.
+
+2. **Fallback: manual CLI** (only when the plugin is not installed, for example in CI without Claude Code):
    ```
    terraform show -json tfplan > tfplan.json
-   ```
-
-2. Run Infracost:
-   ```
    infracost breakdown --path tfplan.json --format json
    ```
 
@@ -108,6 +111,7 @@ After running `terraform_plan`, you MUST:
    - Breakdown per resource (top 5 most expensive)
    - Comparison to current costs (if state exists)
    - Optimization suggestions
+   - Any FinOps policy violations reported by the plugin
 
 4. If cost > $500/month, highlight in bold and ask for extra confirmation.
 
