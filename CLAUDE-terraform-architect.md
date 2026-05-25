@@ -1,11 +1,19 @@
-# CLAUDE.md — Terraform Architect Template (Production-Grade)
+# CLAUDE.md ... Terraform Architect Template (Production-Grade, Monolithic)
 
 This template encodes a production-grade architectural pattern for Terraform projects, based on real-world stack isolation, state separation, and convention enforcement. Use as `CLAUDE.md` at the root of your Terraform repo.
 
 The structure has two main parts:
 
-1. **Agent identity and behavior** (sections below) — defines how Claude should act when working in this repo
-2. **Project Standards & Conventions** — the architectural patterns Claude must follow when generating or refactoring Terraform code
+1. **Agent identity and behavior** (sections below) ... defines how Claude should act when working in this repo
+2. **Project Standards & Conventions** ... the architectural patterns Claude must follow when generating or refactoring Terraform code
+
+---
+
+> **Two flavors of this template**
+>
+> This is the **monolithic** version. Everything lives in one ~530-line `CLAUDE.md`. Great for learning, single-engineer projects, or codebases where you want documentation and rules in one place.
+>
+> A **composed** version exists in [`terraform-architect-pack/`](./terraform-architect-pack/): a slim 80-line `CLAUDE.md` (identity + safety + tooling + pointers) plus 3 subagents and 5 skills under `.claude/`. Recommended when your project has 3+ stacks, 5+ environments, or long Claude Code sessions where attention dilution matters. Section 5.17 of [The DevOps AI Official Guide](https://devops-ai.tech) walks through the refactor from this monolithic version to the composed pack.
 
 ---
 
