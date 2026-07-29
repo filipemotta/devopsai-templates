@@ -180,6 +180,34 @@ cp templates/subagents/security-auditor.md .claude/agents/
 
 **Invoke:** `@security-auditor audit the production namespace security`
 
+### devops-solution-architect.md
+Cloud architect that plans and produces ADRs (Architecture Decision Records). Never writes infrastructure code.
+- Mandatory discovery phase (SLA, compliance, budget, team profile)
+- At least two options with pros/cons/cost, justified against the 6 Well-Architected pillars
+- Output: `docs/ADR-XXXX-title.md` with Implementation Guidelines for the engineer agent
+- Persistent agent memory (`memory: project`) to never contradict past decisions
+
+**Usage:**
+```bash
+cp templates/subagents/devops-solution-architect.md .claude/agents/
+```
+
+**Invoke:** `use the devops-solution-architect to plan a remote backend for our Terraform state`
+
+### devops-senior-engineer.md
+Disciplined IaC executor for approved ADRs. Never makes architectural decisions.
+- 7-step workflow: ADR discovery → MCP pre-validation → structuring → fmt/validate/tflint/checkov → staged execution (dev → staging → prod) → post-deploy validation → implementation report
+- Mandatory tags including `ADR=ADR-XXXX` for decision-to-resource traceability
+- Output: `docs/implementation/IMPL-ADR-XXXX-YYYY-MM-DD.md`
+- Escalates to the architect when the ADR has structural problems
+
+**Usage:**
+```bash
+cp templates/subagents/devops-senior-engineer.md .claude/agents/
+```
+
+**Invoke:** `use the devops-senior-engineer to implement ADR-0002`
+
 ## Complete Quick Setup
 
 Run in your project directory:
