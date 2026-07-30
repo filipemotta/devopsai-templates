@@ -225,6 +225,26 @@ cp /path/to/templates/claude-settings.json .claude/settings.json
 cp /path/to/templates/subagents/*.md .claude/agents/
 ```
 
+## Execution Skills
+
+Most skills in `skills/` are read-only (review, debug, analysis). These three are execution skills for the development inner loop:
+
+### skills/terraform-deploy/
+Runs `fmt → validate → plan → apply` per stack, in numeric order, always skipping the remote-backend stack. **Sandbox/dev only**: checks the workspace before applying and refuses production (production applies belong in CI with approval).
+
+### skills/dockerfile-generator/
+Detects the app language (Next.js, Node, .NET, Python, Go, Rust) and generates a production-ready Dockerfile (multi-stage, pinned alpine/distroless base, non-root UID 1001, HEALTHCHECK) plus `.dockerignore`, then auto-tests it: build, run, health-check poll, image size report and cleanup.
+
+### skills/docker-push-ecr/
+Builds with `--platform=linux/amd64` and pushes images to Amazon ECR (login per region, multiple app/URI pairs per run), verifying the pushed image with `aws ecr describe-images`.
+
+**Usage:**
+```bash
+cp -r /path/to/templates/skills/terraform-deploy .claude/skills/
+cp -r /path/to/templates/skills/dockerfile-generator .claude/skills/
+cp -r /path/to/templates/skills/docker-push-ecr .claude/skills/
+```
+
 ## Agent Teams Templates (Opus 4.6+, recommended Opus 4.7 with xhigh effort and task budgets)
 
 Agent Teams is an experimental Claude Code feature that enables multiple coordinated AI agents working in parallel with shared task lists. These templates configure Agent Teams for specific DevOps scenarios.
