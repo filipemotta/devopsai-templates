@@ -1,0 +1,54 @@
+# Sample workload that brings the three prerequisites from the article:
+# PDB room (3 replicas so minAvailable: 2 leaves eviction space),
+# graceful shutdown (SIGTERM handling + preStop + grace period),
+# and topology spread so replicas do not share a node anyway.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-web
+  namespace: default
+  labels:
+    app: sample-web
+spec:
+  replicas: 3   # exactly 2 replicas with minAvailable: 2 would block every drain forever
+  selector:
+    matchLabels:
+      app: sample-web
+  template:
+    metadata:
+      labels:
+        app: sample-web
+    spec:
+      terminationGracePeriodSeconds: 40
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: sample-web
+      containers:
+        - name: web
+          image: public.ecr.aws/nginx/nginx:1.27-alpine
+          ports:
+            - containerPort: 80
+          # In the immutable model pods relocate routinely, not exceptionally.
+          # nginx handles SIGTERM as fast shutdown; the preStop sleep gives the
+          # endpoint controller time to remove the pod from load balancing
+          # before the process exits, so in-flight requests are not dropped.
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 10"]
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 250m
+              memory: 128Mi
+            limits:
+              memory: 128Mi

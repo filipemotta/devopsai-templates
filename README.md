@@ -21,6 +21,8 @@ templates/
 │   │   ├── eks-upgrade/           # EKS upgrade verification (deprecated APIs, addons)
 │   │   ├── karpenter-debug/       # Karpenter troubleshooting (NodeClaim, consolidation)
 │   │   ├── karpenter-provision/   # Generate NodePool + EC2NodeClass configs
+│   │   ├── eks-upgrade-preflight/ # Consolidated preflight gate (pluto+kubent+insights+drift)
+│   │   ├── eks-upgrade-rollback-drill/ # Guided 5-layer rollback rehearsal
 │   │   └── iam-review/            # AWS IAM least-privilege review
 │   ├── gcp/                       # GCP-specific skills
 │   │   ├── gke-multi-region-bootstrap/  # Agent-team provisioning across regions
@@ -42,12 +44,15 @@ templates/
 │   ├── cost-review/
 │   ├── gitops/
 │   └── devops-general/
-└── subagents/                     # Specialized subagents
-    ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
-    ├── terraform-reviewer.md      # Terraform security & cost review
-    ├── ci-security-analyst.md     # CI/CD vulnerability analysis
-    ├── incident-analyzer.md       # Production incident investigation
-    └── security-auditor.md        # Security audit & CVE triage
+├── subagents/                     # Specialized subagents
+│   ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
+│   ├── terraform-reviewer.md      # Terraform security & cost review
+│   ├── ci-security-analyst.md     # CI/CD vulnerability analysis
+│   ├── incident-analyzer.md       # Production incident investigation
+│   ├── eks-upgrade-validator.md   # Bake-state and fleet-wave validation gate
+│   └── security-auditor.md        # Security audit & CVE triage
+└── poc/                           # Reproducible proof-of-concept labs
+    └── eks-karpenter-upgrade/     # EKS upgrade via Karpenter drift (8-step runbook)
 ```
 
 ## Configuration Files

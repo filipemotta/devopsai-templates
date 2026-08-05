@@ -1,0 +1,34 @@
+# EC2NodeClass: pinned AMI mode (production pattern).
+#
+# IMPORTANT — the subtlety this POC exists to demonstrate:
+# a versioned alias pins the AMI *release*, NOT the Kubernetes version.
+# The alias still resolves against the version of your control plane.
+# Upgrade the cluster from 1.32 to 1.33 with this pin unchanged and
+# Karpenter will resolve the same alias to the 1.33 build of that release,
+# mark every node as Drifted, and begin rotating.
+#
+# That is why scripts/03-freeze-drift.sh exists: it makes the rotation a
+# separately gated decision instead of a side effect of the control plane hop.
+#
+# If you need a selector that resolves to exactly one image regardless of
+# cluster version (e.g. to roll nodes BACK to N-1 during a rollback),
+# replace the alias with an explicit AMI id:
+#
+#   amiSelectorTerms:
+#     - id: ami-0123456789abcdef0
+#
+# Note: no amiFamily field. The alias already implies AL2023.
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  amiSelectorTerms:
+    - alias: al2023@v20250701   # replace with the current release when you run the POC
+  role: KarpenterNodeRole-karpenter-upgrade-poc   # must match terraform output karpenter_node_role
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: karpenter-upgrade-poc
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: karpenter-upgrade-poc

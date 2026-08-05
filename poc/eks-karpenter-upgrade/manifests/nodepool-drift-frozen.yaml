@@ -1,0 +1,26 @@
+# Drift gate: full freeze of Drifted disruption, applied by
+# scripts/03-freeze-drift.sh BEFORE the control plane hop.
+#
+# Why this exists: the versioned alias in the EC2NodeClass re-resolves when
+# the cluster version changes, so the control plane upgrade can itself start
+# the node rotation. Applying this patch first turns "release the rotation"
+# into a separate, deliberate step (scripts/07-release-rotation.sh restores
+# the normal budgets from nodepool.yaml).
+#
+# Consolidation stays alive during the freeze because the zero-node budget
+# is scoped to Drifted only.
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: general
+spec:
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    budgets:
+      - nodes: "0"
+        reasons:
+          - Drifted
+      - nodes: "10%"
+        reasons:
+          - Underutilized
+          - Empty

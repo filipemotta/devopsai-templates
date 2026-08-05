@@ -1,0 +1,25 @@
+# PDB: the availability contract for VOLUNTARY disruption, and only that.
+# It does not protect against node crashes, zone loss or application failure.
+#
+# The arithmetic matters: this deployment runs 3 replicas with
+# minAvailable: 2, which leaves room for exactly one voluntary eviction at
+# a time. With 2 replicas and minAvailable: 2, zero disruptions would be
+# allowed and node rotation would stall indefinitely.
+#
+# unhealthyPodEvictionPolicy: AlwaysAllow prevents permanently unhealthy
+# pods from holding a drain hostage during node maintenance.
+#
+# Remember the deadline from the NodePool: terminationGracePeriod places a
+# hard limit on how long any drain can stay blocked. This PDB holds until
+# that deadline, not past it.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: sample-web
+  namespace: default
+spec:
+  minAvailable: 2
+  unhealthyPodEvictionPolicy: AlwaysAllow
+  selector:
+    matchLabels:
+      app: sample-web

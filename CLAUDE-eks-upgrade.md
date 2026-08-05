@@ -84,15 +84,41 @@ Check after each step:
 - [ ] External-DNS updating records
 - [ ] Secrets syncing (External-Secrets)
 
-### Rollback
+### Rollback (5 layers)
 
-In case of failure:
+"Rollback is a revert" is a slogan. A Git revert restores declared intent; each layer converges back through its own path:
 
-1. **Control Plane**: Direct rollback not possible. Restore from backup or create new cluster
-2. **Node Groups**: Recreate with previous version AMI
-3. **Addons**: `helm rollback [release] [revision]` or `kubectl apply` previous version
+1. **Git**: revert the commit that bumped the version variables (AMI pin, addon versions, cluster version). Restores intent only; nothing has converged yet
+2. **Nodes**: a versioned AMI alias CANNOT take kubelets back to N-1 while the control plane is on N (the alias resolves against the current control plane version). Use an EC2NodeClass with the explicit N-1 AMI ID (record it during preflight), or a blue/green NodePool kept on the previous version
+3. **Addons**: explicit downgrade per compatibility matrix (`aws eks update-addon --resolve-conflicts PRESERVE`); Git does not perform this
+4. **Control Plane**: EKS supports native Kubernetes version rollback to the previous minor version **within 7 days** of the upgrade, one minor at a time. EKS evaluates rollback readiness insights first (API compatibility, version skew, addon compatibility, cluster health); the revert preserves etcd data, workloads and PVs. While nodes are still on N (bake state), this is the cheapest rollback of all: nothing else moves
+5. **CRDs and stored objects**: the least reversible layer. Once controllers wrote new schemas into etcd, going back is a migration question, not a Git question. Read downgrade notes BEFORE upgrading
 
-**IMPORTANT**: Document previous versions of ALL components before upgrade
+**IMPORTANT**: Document previous versions of ALL components (including the exact AMI ID) before upgrade, and rehearse the rollback at least once in a non-critical environment. A rollback that has never run is a document, not a capability.
+
+## Karpenter Drift as the Node Upgrade Engine
+
+If nodes are Karpenter-managed, node upgrades happen by **replacement via drift**, not mutation:
+
+- **The versioned alias trap**: an alias like `al2023@vYYYYMMDD` pins the AMI *release*, NOT the Kubernetes version. It re-resolves against the control plane version, so the control plane hop itself marks every node Drifted and starts the rotation with zero manifest changes. Decide the gate BEFORE the hop:
+  - Freeze the rotation: budget `{reasons: [Drifted], nodes: "0"}`, lift it as a separate deliberate step
+  - Or pin by explicit AMI ID (immune to cluster version changes)
+  - Or stage a second NodePool (blue/green)
+  - Or accept the automatic rotation and schedule the hop inside the maintenance window
+- **Budget gotchas (all three bite in production)**:
+  1. Budget schedules run in UTC (no timezone support): convert explicitly and comment the local window in the manifest
+  2. Defining ANY budget removes the implicit 10% default from reasons you do not name: give consolidation (`Underutilized`, `Empty`) its own explicit line
+  3. Percentages round UP: a 3-node pool with "10%" still allows 1 node (33%). Combine with a numeric budget when an absolute ceiling matters
+- **Expiration is forceful**: `expireAfter` is NOT paced by disruption budgets and does not wait for replacement capacity. `terminationGracePeriod` bounds any drain (drift included) and is required to keep PDB-blocked expired nodes from sitting half-drained forever. The pair's sum is the worst-case node lifetime
+- **Bootstrap island**: keep the Karpenter controller on a small managed node group or Fargate profile, never exclusively on Karpenter-provisioned capacity
+
+## Fleet Scale (multi-cluster)
+
+- Ship **waves**, not clusters: canaries → entire dev fleet → staging → production in batches by criticality tier, go/no-go review between batches
+- Two reconcilers read the same repo: Terraform (or equivalent) for control plane + managed addons, Argo CD for in-cluster resources (NodePools, EC2NodeClasses, controllers). The control plane version is not a Kubernetes API resource
+- Never let the fleet spread across more than 2 minor versions
+- The pipeline enforces sequencing, not people
+- The 7-day native rollback window is the bake timer: let each wave soak inside it before promoting the next
 
 ### Mandatory Backups
 
@@ -179,9 +205,18 @@ aws eks describe-update --name [CLUSTER_NAME] --update-id [UPDATE_ID]
 ## Reference Links
 
 - [EKS Best Practices - Upgrades](https://aws.github.io/aws-eks-best-practices/upgrades/)
+- [EKS Cluster Version Rollback Best Practices](https://docs.aws.amazon.com/eks/latest/best-practices/rollback-cluster-upgrades.html)
 - [Karpenter Upgrading](https://karpenter.sh/docs/upgrading/)
+- [Karpenter Managing AMIs](https://karpenter.sh/docs/tasks/managing-amis/)
 - [EKS Add-on Compatibility](https://docs.aws.amazon.com/eks/latest/userguide/addon-compat.html)
 - [Kubernetes Deprecation Guide](https://kubernetes.io/docs/reference/using-api/deprecation-guide/)
+
+## Related Templates in This Repository
+
+- `skills/eks-upgrade-preflight/` — consolidated preflight (pluto + kubent + insights + matrices + drift exposure)
+- `skills/eks-upgrade-rollback-drill/` — guided 5-layer rollback rehearsal
+- `subagents/eks-upgrade-validator.md` — bake-state and wave validation gate
+- `poc/eks-karpenter-upgrade/` — reproducible single-cluster POC (Terraform + manifests + 8 runbook scripts)
 
 ## Upgrade History
 
@@ -191,5 +226,5 @@ aws eks describe-update --name [CLUSTER_NAME] --update-id [UPDATE_ID]
 
 ---
 
-**Last updated**: [DATE]
+**Last updated**: 2026-08-05
 **Next planned upgrade**: [DATE] - v[VERSION]
