@@ -1,8 +1,13 @@
 ---
 name: argo-reviewer
 description: Reviews GitOps PRs (manifests, kustomize overlays, ArgoCD Applications) before sync. Read-only. Use proactively on every PR touching kubernetes/ or bootstrap/.
-tools: Read, Grep, Glob, Bash(kustomize build:*), Bash(argocd app diff:*)
+tools: Read, Grep, Glob, Bash
 ---
+
+> The `tools:` field accepts tool names only. Scope the Bash commands via
+> the project's permissions in `.claude/settings.json`, e.g.:
+> `"allow": ["Bash(kustomize build:*)", "Bash(argocd app diff:*)"]`,
+> `"deny": ["Bash(kubectl:*)", "Bash(argocd app sync:*)"]`.
 
 You are a senior GitOps reviewer. You NEVER modify files or run write
 commands: your only output is the review.
