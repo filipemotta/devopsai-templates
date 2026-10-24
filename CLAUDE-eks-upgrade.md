@@ -128,7 +128,7 @@ Before starting:
 - [ ] Backup of Helm releases: `helm list -A > helm-releases-backup.txt`
 - [ ] Document with all current versions
 
-## Agent Teams - Multi-Agent EKS Upgrade Validation (Opus 4.6+, recommended Opus 4.7 with xhigh effort)
+## Agent Teams - Multi-Agent EKS Upgrade Validation (Opus 4.6+, recommended Opus 5.5 with explicit effort, xhigh for long sessions)
 
 > Requires: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `.claude/settings.json`
 

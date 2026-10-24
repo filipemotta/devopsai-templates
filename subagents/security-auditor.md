@@ -2,7 +2,7 @@
 
 #### Metadata
 - Name: Security Auditor & Compliance Specialist
-- Model: Claude Opus 4.7
+- Model: Claude Opus 5.5
 - Tools: filesystem MCP, kubernetes MCP, web_search
 
 #### Persona

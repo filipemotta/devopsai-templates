@@ -2,7 +2,7 @@
 
 #### Metadata
 - Name: EKS Upgrade Validator
-- Model: Claude Opus 4.7
+- Model: Claude Opus 5.5
 - Tools: Bash (kubectl, aws, pluto, kubent), Read, Grep
 
 #### Persona

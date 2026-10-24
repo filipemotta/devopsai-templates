@@ -156,7 +156,7 @@ tools:
   - mcp__compute__create_network
   - mcp__compute__create_subnetwork
   - Bash(gcloud:*)
-model: claude-opus-4-7
+model: claude-opus-5-5
 ---
 
 You receive: region, project, cidr_block, release_channel, dry_run, idx.
@@ -208,7 +208,7 @@ NEVER:
 A successful run typically costs:
 - **GKE control plane fee**: Autopilot is free for the cluster, you pay only per pod request
 - **Cloud Build minutes**: 0 (no builds triggered by bootstrap)
-- **Claude session**: ~5,000–10,000 tokens for the orchestrator + ~3,000 per regional subagent. With Opus 4.7 pricing, expect under US$ 10 for a 3-region bootstrap.
+- **Claude session**: ~5,000–10,000 tokens for the orchestrator + ~3,000 per regional subagent. With Opus 5.5 pricing, expect under US$ 10 for a 3-region bootstrap.
 
 ## Integration with the Guide
 

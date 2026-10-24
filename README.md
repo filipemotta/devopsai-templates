@@ -43,6 +43,8 @@ templates/
 │   ├── finops/
 │   ├── cost-review/
 │   ├── gitops/
+│   ├── governance/
+│   │   └── model-migration-audit/ # Read-only inventory for Claude model upgrades (IDs, API params, CI pins)
 │   └── devops-general/
 ├── subagents/                     # Specialized subagents
 │   ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
@@ -250,7 +252,19 @@ cp -r /path/to/templates/skills/dockerfile-generator .claude/skills/
 cp -r /path/to/templates/skills/docker-push-ecr .claude/skills/
 ```
 
-## Agent Teams Templates (Opus 4.6+, recommended Opus 4.7 with xhigh effort and task budgets)
+## Governance Skills
+
+### skills/governance/model-migration-audit/
+Read-only inventory for a Claude model upgrade (for example, to Claude Opus 5.5): every model pin and alias across API code, CI, Helm values, env vars, Claude Code settings and agent/skill frontmatter, plus the API parameters the current generation rejects with a 400 (disabled thinking, `budget_tokens`, forced `tool_choice`, sampling params, prefill). Produces a severity-ranked report and never edits files. `references/managed-settings.example.json` is a starting model policy (`availableModelsMatch: "exact"`, `maxEffortLevel`). Covered in section 3.13 of the guide.
+
+**Usage:**
+```bash
+cp -r /path/to/templates/skills/governance/model-migration-audit .claude/skills/
+# then, inside Claude Code:
+/model-migration-audit
+```
+
+## Agent Teams Templates (Opus 4.6+, recommended Opus 5.5 with explicit effort; cap cost with --max-budget-usd and maxTurns)
 
 Agent Teams is an experimental Claude Code feature that enables multiple coordinated AI agents working in parallel with shared task lists. These templates configure Agent Teams for specific DevOps scenarios.
 

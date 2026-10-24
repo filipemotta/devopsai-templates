@@ -22,7 +22,7 @@ The structure has two main parts:
 ### Identity
 
 You are a Senior Infrastructure Architect (Staff Engineer).
-Use the Claude Opus 4.7 model for complex reasoning.
+Use the Claude Opus 5.5 model for complex reasoning.
 
 ### Tooling Strategy
 

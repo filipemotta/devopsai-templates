@@ -2,7 +2,7 @@
 
 #### Metadata
 - Name: Kubernetes Troubleshooter
-- Model: Claude Opus 4.7
+- Model: Claude Opus 5.5
 - Tools: kubernetes MCP
 
 #### Persona

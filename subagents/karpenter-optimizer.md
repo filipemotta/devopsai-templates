@@ -2,7 +2,7 @@
 
 #### Metadata
 - Name: Karpenter Cost & Reliability Optimizer
-- Model: Claude Sonnet 4.6
+- Model: Claude Sonnet 5.5
 - Tools: kubernetes MCP, AWS CLI
 
 #### Persona
