@@ -44,7 +44,8 @@ templates/
 │   ├── cost-review/
 │   ├── gitops/
 │   ├── governance/
-│   │   └── model-migration-audit/ # Read-only inventory for Claude model upgrades (IDs, API params, CI pins)
+│   │   ├── model-migration-audit/ # Read-only inventory for Claude model upgrades (IDs, API params, CI pins)
+│   │   └── guardrail-audit/       # Read-only audit: fail-open hooks, onFailure "block", OTel audit telemetry
 │   └── devops-general/
 ├── subagents/                     # Specialized subagents
 │   ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
@@ -262,6 +263,16 @@ Read-only inventory for a Claude model upgrade (for example, to Claude Opus 5.5)
 cp -r /path/to/templates/skills/governance/model-migration-audit .claude/skills/
 # then, inside Claude Code:
 /model-migration-audit
+```
+
+### skills/governance/guardrail-audit/
+Read-only audit of a repository's Claude Code guardrails: policy hooks that fail open (no `"onFailure": "block"`, `exit 1` instead of `exit 2`, async `PreToolUse`, missing `jq`/`node` on the runner), guardrails that a repo or local settings file can remove, and `OTEL_*` settings that are ignored in repo settings or that turn audit signals off. Includes the manual fail-closed test. `references/managed-settings.audit.example.json` locks audit telemetry in managed policy (`requiredMinimumVersion` 2.1.307 for `claude_code.safety_event`) and force-enables a guardrails plugin; `references/otel-collector-audit.yaml` is a Collector logs pipeline that forwards only security events to a SIEM, with five detections. Covered in section 13.8 of the guide.
+
+**Usage:**
+```bash
+cp -r /path/to/templates/skills/governance/guardrail-audit .claude/skills/
+# then, inside Claude Code:
+/guardrail-audit
 ```
 
 ## Agent Teams Templates (Opus 4.6+, recommended Opus 5.5 with explicit effort; cap cost with --max-budget-usd and maxTurns)

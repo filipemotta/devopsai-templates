@@ -8,9 +8,13 @@
 # .claude/settings.json and cloud-side IAM (a plan-only/read-only role).
 # Treat this as a tripwire, not a wall.
 #
-# Register in .claude/settings.json:
+# Register in .claude/settings.json. "onFailure": "block" (Claude Code v2.1.295+)
+# makes the call fail closed when this script is missing, crashes or times out;
+# without it, those failures are non-blocking and the command runs:
 #   "hooks": { "PreToolUse": [ { "matcher": "Bash",
-#     "hooks": [ { "type": "command", "command": ".claude/hooks/block-security-writes.sh" } ] } ] }
+#     "hooks": [ { "type": "command", "command": "bash",
+#       "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/block-security-writes.sh"],
+#       "timeout": 10, "onFailure": "block" } ] } ] }
 
 INPUT=$(cat)
 

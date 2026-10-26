@@ -1,0 +1,44 @@
+# OpenTelemetry Collector: a logs pipeline that forwards only Claude Code
+# security and governance events to a SIEM. Requires a Collector release with
+# the filter processor `log_conditions` syntax (v0.146.0 or later).
+# The filter processor DROPS what matches, hence the `not (...)`.
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  filter/claude-audit:
+    error_mode: ignore
+    log_conditions:
+      - >-
+        not (log.attributes["event.name"] == "safety_event"
+          or log.attributes["event.name"] == "tool_decision"
+          or log.attributes["event.name"] == "permission_mode_changed"
+          or log.attributes["event.name"] == "hook_execution_complete"
+          or log.attributes["event.name"] == "hook_registered"
+          or log.attributes["event.name"] == "managed_settings_resolved"
+          or log.attributes["event.name"] == "mcp_server_connection"
+          or log.attributes["event.name"] == "plugin_installed")
+
+exporters:
+  otlp_http/siem:
+    endpoint: https://siem.example.internal:4318
+
+service:
+  pipelines:
+    logs/claude-audit:
+      receivers: [otlp]
+      processors: [filter/claude-audit]
+      exporters: [otlp_http/siem]
+
+# Detections to build in the SIEM (cast string attributes to numbers first):
+# 1. Guardrail failing open: hook_execution_complete, hook_event == "PreToolUse",
+#    num_non_blocking_error > 0
+# 2. Machine outside policy: managed_settings_resolved with empty
+#    managed_settings.sources, managed_settings.helper.state not in (ok, none),
+#    or managed_settings.resolved_sha256 != expected digest
+# 3. Permission escalation: permission_mode_changed, to_mode == "bypassPermissions"
+# 4. Agent pushing on the fence: safety_event, decision == "reject", grouped by session.id
+# 5. Egress denied: safety_event with sandbox_violation_count present and != "0"
