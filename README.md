@@ -256,7 +256,7 @@ cp -r /path/to/templates/skills/docker-push-ecr .claude/skills/
 ## Governance Skills
 
 ### skills/governance/model-migration-audit/
-Read-only inventory for a Claude model upgrade (for example, to Claude Opus 5.5): every model pin and alias across API code, CI, Helm values, env vars, Claude Code settings and agent/skill frontmatter, plus the API parameters the current generation rejects with a 400 (disabled thinking, `budget_tokens`, forced `tool_choice`, sampling params, prefill). Produces a severity-ranked report and never edits files. `references/managed-settings.example.json` is a starting model policy (`availableModelsMatch: "exact"`, `maxEffortLevel`). Covered in section 3.13 of the guide.
+Read-only inventory for a Claude model upgrade (for example, to Claude Opus 5.5): every model pin and alias across API code, CI, Helm values, env vars, Claude Code settings and agent/skill frontmatter, plus the API parameters the current generation rejects with a 400 (disabled thinking, `budget_tokens`, forced `tool_choice`, sampling params, prefill). Produces a severity-ranked report and never edits files. `references/managed-settings.example.json` is a starting model policy (`availableModelsMatch: "exact"`, `maxEffortLevel`). Covered in section 3.10 of the guide.
 
 **Usage:**
 ```bash

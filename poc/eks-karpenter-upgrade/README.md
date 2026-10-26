@@ -4,7 +4,7 @@ Companion repository for the article **"Upgrading EKS with Karpenter: From One
 Cluster to Three Hundred"**. The article explains the reasoning; this repo lets
 you rehearse the runbook on a real cluster in an afternoon.
 
-> Companion to section 7.20 of The DevOps AI Official Guide. Pair it with the
+> Companion to section 7.19 of The DevOps AI Official Guide. Pair it with the
 > AI layer in this repository: `CLAUDE-eks-upgrade.md`, the
 > `skills/aws/eks-upgrade-preflight` and
 > `skills/aws/eks-upgrade-rollback-drill` skills, and the

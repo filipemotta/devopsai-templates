@@ -186,6 +186,6 @@ A typical run completes in 6–10 tool calls (one full cycle) over ~45 seconds. 
 ## Integration with the Guide
 
 This skill implements the read-only triage flow described in:
-- **Section 6.17** (GKE MCP in Action) — Phase 1 triage and Phase 2 plan presentation
-- **Section 3.16.3** (Segmented Endpoints) — endpoint discipline
+- **Section 7.16** (GKE MCP in Action) — Phase 1 triage and Phase 2 plan presentation
+- **Section 7.15.2** (Segmented Endpoints) — endpoint discipline
 - **Section 8.x** (Observability) — query_range patterns

@@ -6,7 +6,7 @@ This is the **composed** counterpart to [`CLAUDE-terraform-architect.md`](../CLA
 - **`.claude/agents/`** ... 3 subagents that own multi-turn workflows
 - **`.claude/skills/`** ... 5 skills that own single-purpose patterns
 
-Section 5.17 of [The DevOps AI Official Guide](https://devops-ai.tech) walks through the rationale and the migration from the monolithic version.
+Section 5.16 of [The DevOps AI Official Guide](https://devops-ai.tech) walks through the rationale and the migration from the monolithic version.
 
 ## When to use this pack instead of the monolith
 

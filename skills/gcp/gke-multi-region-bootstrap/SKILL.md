@@ -213,6 +213,6 @@ A successful run typically costs:
 ## Integration with the Guide
 
 This skill implements the flow described in:
-- **Section 6.18** (Agent Team — Multi-Region GKE Provisioning) — the practical flow
-- **Section 3.16** (GCP MCP Servers) — the underlying MCP setup
-- **Section 12.3** (Guardrails) — the read-first / dry-run-first pattern
+- **Section 7.17** (Parallel Subagents: Multi-Region GKE Provisioning) — the practical flow
+- **Section 7.15.1** (GCP MCP setup) — the underlying MCP setup
+- **Section 13.3** (Guardrails) — the read-first / dry-run-first pattern

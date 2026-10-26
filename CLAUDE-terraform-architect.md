@@ -526,7 +526,7 @@ In both cases, Claude is the author of the plan; the entity that approves and ex
 
 #### When to adopt
 
-Skip this pattern for solo or learning projects with no production workspace. Adopt it the moment you have any environment that classifies as "production" (real users, real money, real data). Pair with Permission Boundaries on the role and Service Control Policies at the AWS Organizations level for stronger guarantees (see the DevOps AI Guide section 12.7).
+Skip this pattern for solo or learning projects with no production workspace. Adopt it the moment you have any environment that classifies as "production" (real users, real money, real data). Pair with Permission Boundaries on the role and Service Control Policies at the AWS Organizations level for stronger guarantees (see the DevOps AI Guide section 6.5).
 
 ---
 
@@ -537,4 +537,4 @@ Skip this pattern for solo or learning projects with no production workspace. Ad
 3. Commit it to git. From then on, every Claude Code session in this repo follows the architecture.
 4. As your project grows, add domain-specific stacks following section 12's checklist.
 
-This template comes from the DevOps AI Official Guide, section 5.8 (chapter 5). See section 4.16 for Spec-Driven Development that pairs naturally with this architecture.
+This template comes from the DevOps AI Official Guide, section 5.8 (chapter 5). See section 4.8 for Spec-Driven Development that pairs naturally with this architecture.
