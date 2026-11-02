@@ -1,0 +1,2 @@
+# Name only. Add the GitHub PAT with `ant beta:vaults:credentials create`, never in git.
+display_name: github-drift-bot

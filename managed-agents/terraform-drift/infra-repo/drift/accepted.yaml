@@ -1,0 +1,12 @@
+# drift/accepted.yaml: human-approved exceptions, merged through a PR with platform CODEOWNERS.
+# The agent reads it and never writes it. Every exception expires.
+- fingerprint: "prod|aws_autoscaling_group.web|desired_capacity"
+  reason: "desired_capacity is driven by target tracking; the code only sets min/max"
+  approved_by: "@acme/platform"
+  pr: 1893
+  expires: 2027-05-01
+- fingerprint: "prod|aws_db_instance.main|instance_class"
+  reason: "emergency upgrade during INC-412; code PR pending"
+  approved_by: "@acme/dba"
+  pr: 1910
+  expires: 2026-11-16      # short on purpose: forces the PR that brings the code in line with reality

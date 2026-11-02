@@ -1,0 +1,3 @@
+name: drift-runner
+config:
+  type: self_hosted            # tools run on your host; with no worker, the session waits in the queue

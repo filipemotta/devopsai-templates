@@ -47,6 +47,8 @@ templates/
 │   │   ├── model-migration-audit/ # Read-only inventory for Claude model upgrades (IDs, API params, CI pins)
 │   │   └── guardrail-audit/       # Read-only audit: fail-open hooks, onFailure "block", OTel audit telemetry
 │   └── devops-general/
+├── managed-agents/                # Claude Managed Agents (scheduled, self-hosted)
+│   └── terraform-drift/           # Daily read-only plan + drift triage (self-hosted worker, plan-only role)
 ├── subagents/                     # Specialized subagents
 │   ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
 │   ├── terraform-reviewer.md      # Terraform security & cost review
