@@ -1,0 +1,2 @@
+name: readiness-ledger
+description: Upgrade blockers seen per cluster and target version (id, first_seen, last_seen, issue, trend).

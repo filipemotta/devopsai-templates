@@ -48,7 +48,8 @@ templates/
 │   │   └── guardrail-audit/       # Read-only audit: fail-open hooks, onFailure "block", OTel audit telemetry
 │   └── devops-general/
 ├── managed-agents/                # Claude Managed Agents (scheduled, self-hosted)
-│   └── terraform-drift/           # Daily read-only plan + drift triage (self-hosted worker, plan-only role)
+│   ├── terraform-drift/           # Daily read-only plan + drift triage (self-hosted worker, plan-only role)
+│   └── k8s-upgrade-readiness/     # Weekly upgrade-readiness verdict from a worker pod inside the cluster
 ├── subagents/                     # Specialized subagents
 │   ├── k8s-troubleshoot.md        # Kubernetes troubleshooting
 │   ├── terraform-reviewer.md      # Terraform security & cost review

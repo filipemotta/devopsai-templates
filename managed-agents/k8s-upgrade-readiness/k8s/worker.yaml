@@ -1,0 +1,85 @@
+# The Managed Agents worker runs in process: every tool call (bash, read) executes in
+# this pod, with this pod's ServiceAccount and Pod Identity role. RBAC and IAM are the
+# hard guardrail; the agent prompt is only the soft one.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: readiness-config
+  namespace: upgrade-readiness
+data:
+  TARGET_VERSION: "1.36"        # bumped by PR in the GitOps repo when you plan the next upgrade
+  CLUSTER_NAME: prod-eu
+  AWS_REGION: eu-west-1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: readiness-worker
+  namespace: upgrade-readiness
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate              # one poller: two sessions writing the same ledger would conflict
+  selector:
+    matchLabels: { app: readiness-worker }
+  template:
+    metadata:
+      labels: { app: readiness-worker }
+    spec:
+      serviceAccountName: readiness-scanner
+      terminationGracePeriodSeconds: 90   # the worker flushes memory for up to 30s on SIGTERM
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: worker
+          image: registry.example.com/platform/readiness-worker:1.0.0   # pin by digest in production
+          envFrom:
+            - configMapRef: { name: readiness-config }
+          env:
+            - name: HOME
+              value: /tmp                  # kubectl and aws cache under $HOME; root fs is read-only
+            - name: ANTHROPIC_ENVIRONMENT_ID
+              valueFrom: { secretKeyRef: { name: anthropic-environment, key: id } }
+            - name: ANTHROPIC_ENVIRONMENT_KEY
+              valueFrom: { secretKeyRef: { name: anthropic-environment, key: key } }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { memory: 512Mi }
+          volumeMounts:
+            - { name: workspace, mountPath: /workspace }
+            - { name: memory, mountPath: /mnt/memory }     # writable parent; the worker creates the store dirs
+            - { name: tmp, mountPath: /tmp }
+            - { name: exceptions, mountPath: /workspace/exceptions, readOnly: true }   # inside the workdir: file tools only reach the workdir and memory dirs
+      volumes:
+        - { name: workspace, emptyDir: {} }
+        - { name: memory, emptyDir: {} }      # a restarted pod starts clean: no leftover store dirs
+        - { name: tmp, emptyDir: {} }
+        - name: exceptions
+          configMap: { name: readiness-exceptions }   # rendered from gitops/accepted.yaml
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: readiness-worker
+  namespace: upgrade-readiness
+spec:
+  podSelector:
+    matchLabels: { app: readiness-worker }
+  policyTypes: ["Ingress", "Egress"]
+  ingress: []                   # the worker only polls outward; nothing connects to it
+  egress:
+    - ports:                    # DNS
+        - { protocol: UDP, port: 53 }
+        - { protocol: TCP, port: 53 }
+    - to:                       # EKS Pod Identity Agent (link-local); test with your CNI
+        - ipBlock: { cidr: 169.254.170.23/32 }
+      ports:
+        - { protocol: TCP, port: 80 }
+    - ports:                    # Anthropic API, EKS API, kube-apiserver. NetworkPolicy cannot
+        - { protocol: TCP, port: 443 }   # filter by FQDN: use an egress proxy or an FQDN-aware CNI to narrow it

@@ -1,0 +1,4 @@
+# A dedicated environment: its environment key only reaches this agent's queue.
+name: readiness-runner
+config:
+  type: self_hosted            # tools run in the readiness-worker pod; no worker, the session waits in the queue

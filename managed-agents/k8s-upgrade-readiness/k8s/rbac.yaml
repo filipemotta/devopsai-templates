@@ -1,0 +1,52 @@
+# Read-only identity for the upgrade-readiness worker.
+# Deliberately NOT the built-in "view" role: view also reads ConfigMaps (often full of
+# connection strings), and every tool output is sent to the model. This role reads only
+# what the scan needs, all of it metadata about the cluster. No Secrets (Helm 3 stores
+# release manifests and values in Secrets, so `pluto detect-helm` stays in CI, section 7.13.7).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: upgrade-readiness
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: readiness-scanner
+  namespace: upgrade-readiness
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: upgrade-readiness-reader
+rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list"]
+  - apiGroups: ["apiregistration.k8s.io"]
+    resources: ["apiservices"]
+    verbs: ["get", "list"]
+  - apiGroups: ["admissionregistration.k8s.io"]
+    resources: ["validatingwebhookconfigurations", "mutatingwebhookconfigurations"]
+    verbs: ["get", "list"]
+  - apiGroups: ["policy"]
+    resources: ["poddisruptionbudgets"]
+    verbs: ["get", "list"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: upgrade-readiness-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: upgrade-readiness-reader
+subjects:
+  - kind: ServiceAccount
+    name: readiness-scanner
+    namespace: upgrade-readiness

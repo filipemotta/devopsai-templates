@@ -1,0 +1,2 @@
+# Name only; the token goes in through the CLI, never into git.
+display_name: github-readiness-bot

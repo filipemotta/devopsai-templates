@@ -1,0 +1,11 @@
+# Human-approved exceptions, reviewed in a PR. The agent reads this file and never edits it.
+# Rendered into the ConfigMap "readiness-exceptions" (key accepted.yaml) by your GitOps tool.
+exceptions:
+  - id: pdb/batch/nightly-etl          # check/namespace/name, as printed in the issue
+    reason: Job PDB is intentionally 0 during the ETL window; drain runs outside it.
+    owner: data-platform
+    expires: "2026-12-15"
+  - id: insight-client/legacy-operator/0.3
+    reason: Vendor ships v1 client in 0.4 (ticket OPS-4411); upgrade blocked until then.
+    owner: platform
+    expires: "2026-11-30"

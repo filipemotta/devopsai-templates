@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "UpgradeReadinessReadOnly",
+      "Effect": "Allow",
+      "Action": [
+        "eks:ListInsights",
+        "eks:DescribeInsight",
+        "eks:ListAddons",
+        "eks:DescribeAddon",
+        "eks:DescribeAddonVersions"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
